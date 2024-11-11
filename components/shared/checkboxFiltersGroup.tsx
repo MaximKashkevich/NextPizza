@@ -22,14 +22,14 @@ interface Props {
 export const CheckboxFiltersGroup: React.FC<Props> = ({
   title,
   items,
-  defaultItems,
-  limit = 5,
+  // defaultItems,
+  // limit = 5,
   searchInputPlaceholder = "Поиск...",
   className,
-  loading,
-  onClickCheckbox,
-  selected,
-  name,
+  // loading,
+  // onClickCheckbox,
+  // selected,
+  // name,
 }) => {
   return (
     <div className={className}>
