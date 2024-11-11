@@ -5,3 +5,4 @@ export { Categories } from "./categories";
 export { SortPopup } from "./sortPopup";
 export { TopBar } from "./topBar";
 export { Filters } from "./filters";
+export { FilterCheckbox } from "./filterCheckbox";
