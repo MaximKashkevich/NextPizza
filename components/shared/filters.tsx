@@ -8,12 +8,20 @@ import {
   CheckboxFiltersGroup,
 } from "./index";
 import { Input } from "../ui";
+import { useFilterIngredients } from "../../hooks/useFilterIngredients";
 
 interface Props {
   className?: string;
 }
 
 export const Filters: React.FC<Props> = ({ className }) => {
+  const { ingredients, loading } = useFilterIngredients();
+
+  const items = ingredients.map((item) => ({
+    value: String(item.id),
+    text: item.name,
+  }));
+
   return (
     <>
       <div className={className}>
@@ -38,62 +46,9 @@ export const Filters: React.FC<Props> = ({ className }) => {
           title="Ингридиенты"
           limit={6}
           className="mt-5"
-          defaultItems={[
-            {
-              text: "Сырный соус",
-              value: "1",
-            },
-            {
-              text: "Моцарелла",
-              value: "2",
-            },
-            {
-              text: "Чеснок",
-              value: "3",
-            },
-            {
-              text: "Солённые огурчики",
-              value: "4",
-            },
-            {
-              text: "Красный лук",
-              value: "5",
-            },
-            {
-              text: "Томаты",
-              value: "6",
-            },
-          ]}
-          items={[
-            {
-              text: "Сырный соус",
-              value: "1",
-            },
-            {
-              text: "Моцарелла",
-              value: "2",
-            },
-            {
-              text: "Чеснок",
-              value: "3",
-            },
-            {
-              text: "Солённые огурчики",
-              value: "4",
-            },
-            {
-              text: "Красный лук",
-              value: "5",
-            },
-            {
-              text: "Томаты",
-              value: "6",
-            },
-            {
-              text: "ПЭПЭРОННИ",
-              value: "7",
-            },
-          ]}
+          defaultItems={items.slice(0, 6)}
+          items={items}
+          loading={loading}
         />
       </div>
     </>

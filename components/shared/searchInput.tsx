@@ -1,9 +1,8 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-
 import React, { useRef, useState, useEffect } from "react";
-import { useClickAway, useDebounce } from "react-use";
+import { useClickAway } from "react-use";
 import { cn } from "../../lib/utils";
 import Link from "next/link";
 import { Api } from "../../services/api-client";
@@ -35,16 +34,28 @@ export const SearchInput: React.FC<Props> = ({ className }) => {
     }
   }, [focused]);
 
-  useDebounce(
-    () => {
-      Api.products.search(searchQuery).then((items) => {
-        setProducts(items);
-        console.log(searchQuery);
-      });
-    },
-    250,
-    [searchQuery]
-  );
+  // Используйте useEffect для поиска продуктов
+  useEffect(() => {
+    if (searchQuery) {
+      const delayDebounceFn = setTimeout(() => {
+        Api.products.search(searchQuery).then((items) => {
+          setProducts(items);
+          console.log(searchQuery);
+        });
+      }, 250);
+
+      return () => clearTimeout(delayDebounceFn);
+    } else {
+      setProducts([]); // Очищаем продукты при пустом запросе
+    }
+  }, [searchQuery]);
+
+  const onClickItem = () => {
+    setFocused(false);
+    setSearchQuery("");
+    setProducts([]);
+  };
+
   return (
     <>
       {focused && (
@@ -85,21 +96,20 @@ export const SearchInput: React.FC<Props> = ({ className }) => {
           )}
         >
           {products.map((product) => (
-            <>
-              <Link
-                key={product.id}
-                className="flex items-center gap-3 w-full px-3 py-2 hover:bg-primary/10"
-                href={`/products/${product.id}`}
-              >
-                <img
-                  src={product.imageUrl}
-                  alt={product.name}
-                  width={32}
-                  height={32}
-                />
-                <div>{product.name}</div>
-              </Link>
-            </>
+            <Link
+              onClick={onClickItem}
+              key={product.id}
+              className="flex items-center gap-3 w-full px-3 py-2 hover:bg-primary/10"
+              href={`/product/${product.id}`}
+            >
+              <img
+                src={product.imageUrl}
+                alt={product.name}
+                width={32}
+                height={32}
+              />
+              <div>{product.name}</div>
+            </Link>
           ))}
         </div>
       )}
