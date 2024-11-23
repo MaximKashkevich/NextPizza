@@ -1,9 +1,10 @@
 import React from "react";
 import { cn } from "../../lib/utils";
-import { Container } from "./container";
+import { Container, SearchInput } from "./index";
 import Image from "next/image";
 import { Button } from "../ui";
 import { ArrowRight, ShoppingCart, User } from "lucide-react";
+import Link from "next/link";
 
 interface Props {
   className?: string;
@@ -13,24 +14,32 @@ export const Header: React.FC<Props> = ({ className }) => {
   return (
     <>
       <header className={cn("border border-b", className)}>
-        <Container className="flex items-center justify-between py-8">
+        <Container className="flex items-center justify-between py-4 md:py-8">
           {/* Левая часть */}
-          <div className="flex items-center gap-4">
-            <Image
-              src="/assets/Header/logo.png"
-              width={35}
-              height={35}
-              alt="logo"
-            ></Image>
-            <div>
-              <h1 className="text-2xl uppercase font-black">Next Pizza</h1>
-              <p className="text-sm text-gray-400 leading-3">
-                вкусней уже некуда
-              </p>
+          <Link href="#/">
+            <div className="flex items-center gap-2 md:gap-4">
+              <Image
+                src="/assets/Header/logo.png"
+                width={35}
+                height={35}
+                alt="logo"
+              />
+              <div className="hidden md:block">
+                <h1 className="text-xl md:text-2xl uppercase font-black">
+                  Next Pizza
+                </h1>
+                <p className="text-xs md:text-sm text-gray-400">
+                  вкусней уже некуда
+                </p>
+              </div>
             </div>
+          </Link>
+          {/* Поиск */}
+          <div className="mx-4 flex-1 flex md:flex">
+            <SearchInput />
           </div>
           {/* Правая часть */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <Button variant="outline" className="gap-1">
               <User size={16} />
               Войти
@@ -38,7 +47,7 @@ export const Header: React.FC<Props> = ({ className }) => {
             <div>
               <Button className="group relative">
                 <b>520₽</b>
-                <span className="h-full w-[1px] bg-white/30 mx-3" />
+                <span className="h-full w-[1px] bg-white/30 mx-2 hidden md:block" />
                 <div className="flex items-center gap-1 transition duration-300 group-hover:opacity-0">
                   <ShoppingCart
                     size={16}
