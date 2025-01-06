@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Title } from "./index";
 import { Button } from "../ui";
 import { Plus } from "lucide-react";
-import Image from "next/image";
 
 interface Props {
   id: number;
@@ -22,6 +21,7 @@ export const ProductCard: React.FC<Props> = ({
   //   ingredients,
   className,
 }) => {
+  console.log(price);
   return (
     <div className={className}>
       <Link href={`/product/${id}`}>

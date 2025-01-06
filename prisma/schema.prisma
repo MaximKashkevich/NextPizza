@@ -1,167 +1,121 @@
-// Определяем генератор клиента Prisma, который будет использоваться для работы с базой данных
 generator client {
-    provider = "prisma-client-js" // Указываем, что используем JavaScript клиент для Prisma
+  provider = "prisma-client-js"
 }
 
-// Определяем источник данных (datasource) для подключения к базе данных PostgreSQL
 datasource db {
-    provider = "postgresql" // Указываем, что используем PostgreSQL как систему управления базами данных
-    url = env("POSTGRES_URL") // Используем переменную окружения для подключения к базе данных с включением пула соединений
-    directUrl = env("POSTGRES_URL_NON_POOLING") // Переменная окружения для прямого подключения без пула соединений
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-// Определяем модель User, представляющую пользователей в нашей базе данных
 model User {
-    id Int @id @default(autoincrement()) // Уникальный идентификатор пользователя, автоинкрементируемый
-
-    fullName String // Полное имя пользователя
-    email String @unique // Уникальный адрес электронной почты пользователя
-    password String // Пароль пользователя
-    verified Boolean @default(false)
-
-    createdAt DateTime @default(now()) // Дата и время создания записи, по умолчанию - текущее время
-    updatedAt DateTime @updatedAt // Дата и время последнего обновления записи, обновляется автоматически
-
-    cart Cart? // Связь с моделью Cart, указывающая на корзину пользователя (может быть null)
-    orders Order[]
-    verification VerificationCode?
-
-    provider String?
-    providerId String?
-
-    role UserRole @default(USER)
+  id           Int               @id @default(autoincrement())
+  fullName     String
+  email        String            @unique
+  password     String
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  role         UserRole
+  cart         Cart?
+  orders       Order[]
+  verification VerificationCode?
 }
 
-// Определяем модель Product, представляющую продукты в нашей базе данных
 model Product {
-    id Int @id @default(autoincrement()) // Уникальный идентификатор продукта, автоинкрементируемый
-    name String // Название продукта
-    imageUrl String // URL изображения продукта
-    createdAt DateTime @default(now()) // Дата и время создания записи, по умолчанию - текущее время
-    updatedAt DateTime @updatedAt // Дата и время последнего обновления записи, обновляется автоматически
-
-    category Category @relation(fields: [categoryId], references: [id]) // Связь с моделью Category через поле categoryId
-    categoryId Int // Идентификатор категории, к которой относится продукт
-
-    ingredients Ingredient[] // Связь с моделью Ingredient, указывающая на ингредиенты, входящие в продукт
-    items ProductItem[] // Связь с моделью ProductItem, представляющей различные варианты продукта (например, размеры)
+  id          Int           @id @default(autoincrement())
+  name        String
+  imageUrl    String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  categoryId  Int
+  category    Category      @relation(fields: [categoryId], references: [id])
+  items       ProductItem[]
+  ingredients Ingredient[]  @relation("IngredientToProduct")
 }
 
-// Определяем модель Category, представляющую категории продуктов в нашей базе данных
 model Category {
-    id Int @id @default(autoincrement()) // Уникальный идентификатор категории, автоинкрементируемый
-    name String @unique // Уникальное название категории
-
-    products Product[] // Связь с моделью Product, указывающая на продукты, относящиеся к этой категории
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products Product[]
 }
 
-// Определяем модель Ingredient, представляющую ингредиенты продуктов в нашей базе данных
 model Ingredient {
-    id Int @id @default(autoincrement()) // Уникальный идентификатор ингредиента, автоинкрементируемый
-    name String @unique // Уникальное название ингредиента
-    price Int // Цена ингредиента
-    imageUrl String // URL изображения ингредиента
-    createdAt DateTime @default(now()) // Дата и время создания записи, по умолчанию - текущее время
-    updatedAt DateTime @updatedAt // Дата и время последнего обновления записи, обновляется автоматически
-
-    products Product[] // Связь с моделью Product, указывающая на продукты, содержащие этот ингредиент
-    cartItem CartItem[]
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  price     Int
+  imageUrl  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  cartItem  CartItem[] @relation("CartItemToIngredient")
+  products  Product[]  @relation("IngredientToProduct")
 }
 
-// Определяем модель ProductItem, представляющую варианты продуктов (например, размеры или типы пиццы)
 model ProductItem {
-    id Int @id @default(autoincrement()) // Уникальный идентификатор варианта продукта, автоинкрементируемый
-
-    price Int // Цена варианта продукта
-    size Int? // Размер варианта продукта (может быть null)
-    pizzaType String? // Тип пиццы (может быть null)
-
-    product Product @relation(fields: [productId], references: [id]) // Связь с моделью Product через поле productId
-    productId Int // Идентификатор продукта, к которому относится данный вариант
-
-    cartItems CartItem[]
+  id        Int        @id @default(autoincrement())
+  price     Int
+  size      Int?
+  pizzaType String?
+  productId Int
+  cartItems CartItem[]
+  product   Product    @relation(fields: [productId], references: [id])
 }
 
-// Определяем модель Cart, представляющую корзину покупок пользователя
 model Cart {
-    id Int @id @default(autoincrement()) // Уникальный идентификатор корзины, автоинкрементируемый
-    userId Int? @unique // Уникальный идентификатор пользователя, которому принадлежит корзина
-    user User? @relation(fields: [userId], references: [id]) // Связь с моделью User через поле userId
-    totalAmount Int @default(0) // Общая сумма в корзине, по умолчанию - 0
-    token String // Токен корзины (например, для идентификации на клиенте)
-
-    createdAt DateTime @default(now()) // Дата и время создания записи, по умолчанию - текущее время
-    updatedAt DateTime @updatedAt // Дата и время последнего обновления записи, обновляется автоматически
-
-    items CartItem[] // Связь с моделью CartItem, представляющая элементы в корзине
+  id          Int        @id @default(autoincrement())
+  userId      Int        @unique
+  totalAmount Int        @default(0)
+  token       String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  user        User       @relation(fields: [userId], references: [id])
+  items       CartItem[]
 }
 
-// Определяем модель CartItem, представляющую элементы в корзине
 model CartItem {
-    id Int @id @default(autoincrement()) // Уникальный идентификатор элемента корзины, автоинкрементируемый
-
-
-    productItem ProductItem @relation(fields: [productItemId], references: [id]) // Связь с моделью ProductItem через поле productItemId
-    productItemId Int // Идентификатор продукта, который содержится в элементе корзины
-
-    Cart Cart @relation(fields: [cartId], references: [id]) // Связь с моделью Cart через поле cartId
-    cartId Int // Идентификатор корзины, к которой относится этот элемент
-
-    quantity Int // Количество этого продукта в корзине
-
-    ingredients Ingredient[] // Связь с моделью Ingredient, представляющая ингредиенты данного элемента
-    createdAt DateTime @default(now()) // Дата и время создания записи, по умолчанию - текущее время
-    updatedAt DateTime @updatedAt // Дата и время последнего обновления записи, обновляется автоматически
-
+  id            Int          @id @default(autoincrement())
+  productItemId Int
+  cartId        Int
+  quantity      Int
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  Cart          Cart         @relation(fields: [cartId], references: [id])
+  productItem   ProductItem  @relation(fields: [productItemId], references: [id])
+  ingredients   Ingredient[] @relation("CartItemToIngredient")
 }
 
-// Определяем модель Order, представляющую заказы пользователей
 model Order {
-    id Int @id @default(autoincrement()) // Уникальный идентификатор заказа, автоинкрементируемый
-
-
-    user User? @relation(fields: [userId], references: [id]) // Связь с моделью User через поле userId
-    userId Int? // Идентификатор пользователя, сделавшего заказ (может быть null)
-
-    token String // Токен заказа (например, для идентификации)
-    totalAmount Int // Общая сумма заказа
-    status OrderStatus // Статус заказа (например, обработан, отправлен и т.д.)
-    paymentId String? // Идентификатор платежа (может быть null)
-
-    items Json // Информация о товарах в заказе в формате JSON
-
-    fullName String // Полное имя заказчика
-    email String // Электронная почта заказчика
-    phone String // Телефон заказчика
-    address String // Адрес доставки
-    comment String // Комментарий к заказу
-
-    createdAt DateTime @default(now()) // Дата и время создания заказа, по умолчанию - текущее время
-    updatedAt DateTime @updatedAt // Дата и время последнего обновления заказа, обновляется автоматически
-
+  id          Int         @id @default(autoincrement())
+  userId      Int?
+  token       String
+  totalAmount Int
+  status      OrderStatus
+  paymentId   String?
+  items       Json
+  fullName    String
+  email       String
+  phone       String
+  address     String
+  comment     String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  user        User?       @relation(fields: [userId], references: [id])
 }
 
-// Определяем модель VerificationCode, представляющую коды верификации пользователей
 model VerificationCode {
-    id Int @id @default(autoincrement()) // Уникальный идентификатор кода верификации, автоинкрементируемый
-
-
-    user User @relation(fields: [userId], references: [id]) // Связь с моделью User через поле userId
-    userId Int @unique // Уникальный идентификатор пользователя, которому принадлежит код
-
-    code String // Код верификации
-    expiresAt DateTime @default(now()) // Дата и время истечения срока действия кода, по умолчанию - текущее время
-    createdAt DateTime @default(now()) // Дата и время создания кода, по умолчанию - текущее время
-    @@unique([userId, code])
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  code      String
+  expiresAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
-enum OrderStatus{
-    PENDING
-    COMPLETED
-    CANCELLED
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
 }
 
-enum UserRole{
-    USER
-    ADMIN
+enum UserRole {
+  USER
+  ADMIN
 }

@@ -1,37 +1,33 @@
-import React from "react";
+"use client";
+
 import { cn } from "../../lib/utils";
+import { useCategoryStore } from "../../store/categories";
+import { Category } from "@prisma/client";
+import React from "react";
 
 interface Props {
+  items: Category[];
   className?: string;
 }
 
-const cats = [
-  "Пиццы",
-  "Комбо",
-  "Закуски",
-  "Коктейли",
-  "Кофе",
-  "Напитки",
-  "Десерты",
-];
-const activeIndex = 0;
+export const Categories: React.FC<Props> = ({ items, className }) => {
+  const categoryActiveId = useCategoryStore((state) => state.activeId);
 
-export const Categories: React.FC<Props> = ({ className }) => {
   return (
     <div
-      className={cn("inline-flex gap-1 bg-gray-50 p-1 rounded-2xl ", className)}
+      className={cn("inline-flex gap-1 bg-gray-50 p-1 rounded-2xl", className)}
     >
-      {cats.map((category, index) => (
+      {items.map(({ name, id }, index) => (
         <a
-          key={index}
           className={cn(
             "flex items-center font-bold h-11 rounded-2xl px-5",
-            activeIndex === index
-              ? "bg-white bg-opacity-70 shadow-md text-primary" // Изменено на bg-opacity-70 и text-black
-              : "text-black opacity-100 font-extrabold"
+            categoryActiveId === id &&
+              "bg-white shadow-md shadow-gray-200 text-primary"
           )}
+          href={`/#${name}`}
+          key={index}
         >
-          <button>{category}</button>
+          <button>{name}</button>
         </a>
       ))}
     </div>
