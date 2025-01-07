@@ -33,6 +33,8 @@ export const ProductsGroupList: React.FC<Props> = ({
     }
   }, [intersection?.isIntersecting]);
 
+  console.log(items);
+
   return (
     <div className={className} id={title} ref={intersectionRef}>
       <Title text={title} size="lg" className="font-extrabold mb-5" />
@@ -43,8 +45,8 @@ export const ProductsGroupList: React.FC<Props> = ({
             id={product.id}
             name={product.name}
             imageUrl={product.imageUrl}
-            // price={product.items[0].price}
-            price={product.price}
+            price={product.items[0].price}
+            // price={product.price}
             // ingredients={product.ingredients}
           />
         ))}

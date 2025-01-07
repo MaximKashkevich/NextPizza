@@ -24,11 +24,11 @@ export default async function Home() {
       <Container className="mt-10">
         <Title text="Все пиццы" size="lg" className="font-extrabolt"></Title>
       </Container>
-      {/* <TopBar
+      <TopBar
         categories={categories.filter(
           (categorie) => categorie.products.length > 0 //Если в опредленной категории есть продукт, рендерим
         )}
-      /> */}
+      />
 
       <Container className="pb-14 mt-10">
         <div className="flex gap-[60px]">
