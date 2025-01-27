@@ -13,7 +13,7 @@ interface Props {
 	className?: string
 }
 
-export const ChoosePizzaForm: React.FC<Props> = ({
+export const ChooseProductForm: React.FC<Props> = ({
 	name,
 	imageUrl,
 	className,

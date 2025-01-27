@@ -1,6 +1,6 @@
 export { Categories } from './categories'
 export { CheckboxFiltersGroup } from './checkboxFiltersGroup'
-export { ChoosePizzaForm } from './choosePizzaForm'
+export { ChooseProductForm } from './chooseProductForm'
 export { Container } from './container'
 export { FilterCheckbox } from './filterCheckbox'
 export { Filters } from './filters'

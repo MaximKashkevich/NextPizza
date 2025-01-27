@@ -1,19 +1,25 @@
 'use client'
 
-import { Product } from '@prisma/client'
 import { useRouter } from 'next/navigation'
+import { ProductWithRelations } from '../../../@types/prisma'
 import { cn } from '../../../lib/utils'
 import { Dialog } from '../../ui'
 import { DialogContent } from '../../ui/dialog'
-import { ChoosePizzaForm } from '../choosePizzaForm'
+import { ChooseProductForm } from '../chooseProductForm'
 
 interface Props {
-	product: Product
+	product: ProductWithRelations
 	className?: string
 }
 
 export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
 	const router = useRouter()
+
+	// Проверяем, есть ли элементы в массиве и есть ли pizzaType у первого элемента
+	const isPizzaForm =
+		product.items.length > 0 && Boolean(product.items[0].pizzaType)
+
+	console.log(product.items[0].pizzaType)
 
 	return (
 		<Dialog open={Boolean(product)} onOpenChange={() => router.back()}>
@@ -23,11 +29,15 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
 					className
 				)}
 			>
-				<ChoosePizzaForm
-					imageUrl={product.imageUrl}
-					name={product.name}
-					ingredients={[]}
-				/>
+				{isPizzaForm ? (
+					<h1>ПЭЭЭЭЭЭЭЭППППЭЭЭЭЭЭЭЭЭЭЭЭЭРОНИ</h1>
+				) : (
+					<ChooseProductForm
+						imageUrl={product.imageUrl}
+						name={product.name}
+						ingredients={[]}
+					/>
+				)}
 			</DialogContent>
 		</Dialog>
 	)
