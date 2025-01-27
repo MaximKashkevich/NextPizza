@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { ReactNode } from 'react'
 
 export const metadata: Metadata = {
 	title: 'Next Pizza | Главная',
@@ -7,15 +6,15 @@ export const metadata: Metadata = {
 
 export default function HomeLayout({
 	children,
-	modal,
-}: {
-	children: ReactNode
-	modal: ReactNode
-}) {
+	mod,
+}: Readonly<{
+	children: React.ReactNode
+	mod: React.ReactNode
+}>) {
 	return (
 		<main className='min-h-screen'>
 			{children}
-			{modal}
+			{mod}
 		</main>
 	)
 }
