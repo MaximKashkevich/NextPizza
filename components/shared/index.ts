@@ -1,17 +1,16 @@
-import { GroupVariants } from "./groupVariants";
-
-export { Container } from "./container";
-export { Header } from "./header";
-export { Title } from "./title";
-export { Categories } from "./categories";
-export { SortPopup } from "./sortPopup";
-export { TopBar } from "./topBar";
-export { Filters } from "./filters";
-export { FilterCheckbox } from "./filterCheckbox";
-export { RangeSlider } from "./rangeSlider";
-export { CheckboxFiltersGroup } from "./checkboxFiltersGroup";
-export { ProductCard } from "./productCard";
-export { ProductsGroupList } from "./productsGroupList";
-export { SearchInput } from "./searchInput";
-export { ProductImage } from "./productImage";
-export { GroupVariants } from "./groupVariants";
+export { Categories } from './categories'
+export { CheckboxFiltersGroup } from './checkboxFiltersGroup'
+export { Container } from './container'
+export { FilterCheckbox } from './filterCheckbox'
+export { Filters } from './filters'
+export { GroupVariants } from './groupVariants'
+export { Header } from './header'
+export * from './modals'
+export { ProductCard } from './productCard'
+export { ProductImage } from './productImage'
+export { ProductsGroupList } from './productsGroupList'
+export { RangeSlider } from './rangeSlider'
+export { SearchInput } from './searchInput'
+export { SortPopup } from './sortPopup'
+export { Title } from './title'
+export { TopBar } from './topBar'

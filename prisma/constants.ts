@@ -123,11 +123,10 @@ export const _ingredients = [
 
 export const products = [
 	{
-		name: 'Омлет с ветчиной',
+		name: 'Омлет с ветчиной и грибами',
 		imageUrl:
 			'https://media.dodostatic.net/image/r:292x292/11EE7970321044479C1D1085457A36EB.webp',
 		categoryId: 2,
-		price: 100,
 	},
 	{
 		name: 'Омлет с пепперони',

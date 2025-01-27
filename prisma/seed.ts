@@ -66,7 +66,8 @@ async function up() {
 	const pizza1 = await prisma.product.create({
 		data: {
 			name: 'Пепперони фреш',
-			imageUrl: 'https://roll-club.kh.ua/wp-content/uploads/2022/12/5.jpg',
+			imageUrl:
+				'https://media.dodostatic.net/image/r:233x233/11EE7D61304FAF5A98A6958F2BB2D260.webp',
 			categoryId: 1,
 			ingredients: {
 				connect: _ingredients.slice(0, 5),
