@@ -1,7 +1,8 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { ProductWithRelations } from '../../../@types/prisma'
+import { ChoosePizzaForm } from '..'
+import { ProductWithRelations } from '../../../../@types/prisma'
 import { cn } from '../../../lib/utils'
 import { Dialog } from '../../ui'
 import { DialogContent } from '../../ui/dialog'
@@ -30,13 +31,13 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
 				)}
 			>
 				{isPizzaForm ? (
-					<h1>ПЭЭЭЭЭЭЭЭППППЭЭЭЭЭЭЭЭЭЭЭЭЭРОНИ</h1>
-				) : (
-					<ChooseProductForm
+					<ChoosePizzaForm
 						imageUrl={product.imageUrl}
 						name={product.name}
 						ingredients={[]}
 					/>
+				) : (
+					<ChooseProductForm imageUrl={product.imageUrl} name={product.name} />
 				)}
 			</DialogContent>
 		</Dialog>
