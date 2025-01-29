@@ -28,7 +28,6 @@ export const ProductsGroupList: React.FC<Props> = ({
 
 	useEffect(() => {
 		if (intersection?.isIntersecting) {
-			console.log(title, categoryId)
 		}
 	}, [intersection?.isIntersecting])
 
