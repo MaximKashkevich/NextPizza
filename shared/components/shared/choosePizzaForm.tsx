@@ -3,7 +3,12 @@
 import { Ingredient } from '@prisma/client'
 import { useState } from 'react'
 import { GroupVariants, PizzaImage } from '.'
-import { PizzaSizes, pizzaSizes, PizzaTypes } from '../../constants.ts/pizza'
+import {
+	PizzaSizes,
+	pizzaSizes,
+	pizzaTypes,
+	PizzaTypes,
+} from '../../constants.ts/pizza'
 import { cn } from '../../lib/utils'
 import { Button } from '../ui'
 import { Title } from './title'
@@ -42,6 +47,12 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 					items={pizzaSizes}
 					value={String(size)}
 					onClick={value => setSizes(Number(value) as PizzaSizes)}
+				/>
+
+				<GroupVariants
+					items={pizzaTypes}
+					value={String(type)}
+					onClick={value => setTypes(Number(value) as PizzaTypes)}
 				/>
 
 				<Button className='h-[55px] px-10 text-base rounded-[18px] w-full mt-10'>
