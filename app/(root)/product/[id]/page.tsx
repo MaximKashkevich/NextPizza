@@ -7,11 +7,13 @@ import {
 	Title,
 } from '../../../../shared/components/shared'
 
-export default async function ProductPage({
-	params: { id },
-}: {
-	params: { id: string }
-}) {
+interface PageProps {
+	params: {
+		id: string
+	}
+}
+
+export default async function ProductPage({ params: { id } }: PageProps) {
 	const product = await prisma.product.findFirst({ where: { id: Number(id) } })
 
 	if (!product) {
