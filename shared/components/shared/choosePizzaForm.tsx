@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useSet } from 'react-use'
 import { GroupVariants, IngredientItem, PizzaImage } from '.'
 import {
+	mapPyzzaType,
 	PizzaSizes,
 	pizzaSizes,
 	pizzaTypes,
@@ -34,13 +35,20 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 	const [size, setSizes] = useState<PizzaSizes>(20)
 	const [type, setTypes] = useState<PizzaTypes>(1)
 
-	const [selectedIngredients, { toggle: addIngredient }] = useSet(
+	const [selectedIngredients, { toggle: addIngredients }] = useSet(
 		new Set<number>()
 	)
 
-	const textDetaills = '30 см, традиционной пиццы'
+	const textDetaills = `${size} см ${mapPyzzaType[type]} пицца`
 
-	console.log(items)
+	const pizzaPrice =
+		items.find(item => item.pizzaType == type && item.size == size)?.price || 0
+
+	const pizzaIngredient = ingredients
+		.filter(ingredient => selectedIngredients.has(ingredient.id))
+		.reduce((acc, value) => acc + value.price, 0)
+
+	const totalPrice = pizzaPrice + pizzaIngredient
 
 	return (
 		<div className={cn(className, 'flex flex-1')}>
@@ -52,9 +60,9 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 
 				<div className='flex flex-col mt-4 gap-2'>
 					<GroupVariants
+						onClick={value => setSizes(Number(value) as PizzaSizes)}
 						items={pizzaSizes}
 						value={String(size)}
-						onClick={value => setSizes(Number(value) as PizzaSizes)}
 					/>
 
 					<GroupVariants
@@ -72,7 +80,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 								key={ingredient.id}
 								name={ingredient.name}
 								price={ingredient.price}
-								onClick={() => addIngredient(ingredient.id)}
+								onClick={() => addIngredients(ingredient.id)}
 								active={selectedIngredients.has(ingredient.id)}
 							/>
 						))}
@@ -80,7 +88,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 				</div>
 
 				<Button className='h-[55px] px-10 text-base rounded-[18px] w-full mt-4'>
-					Добавить в корзину за {'totalPrice'} ₽
+					Добавить в корзину за {totalPrice} ₽
 				</Button>
 			</div>
 		</div>
