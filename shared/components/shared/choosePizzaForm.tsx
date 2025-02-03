@@ -1,12 +1,11 @@
 'use client'
 
 import { Ingredient, ProductItem } from '@prisma/client'
-import { useEffect, useState } from 'react'
-import { useSet } from 'react-use'
 import { GroupVariants, IngredientItem, PizzaImage } from '.'
 import { PizzaSizes, pizzaTypes, PizzaTypes } from '../../constants.ts/pizza'
 
-import { getAvailablePizzaSizes, PizzaDetails } from '../../lib'
+import { usePizzaOptions } from '../../hooks'
+import { PizzaDetails } from '../../lib'
 import { cn } from '../../lib/utils'
 import { Button } from '../ui'
 import { Title } from './title'
@@ -28,33 +27,23 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 	ingredients,
 	items,
 }) => {
-	const [size, setSizes] = useState<PizzaSizes>(20)
-	const [type, setTypes] = useState<PizzaTypes>(1)
+	const {
+		size,
+		type,
+		setSizes,
+		setTypes,
+		selectedIngredients,
+		addIngredients,
+		availableSizes,
+	} = usePizzaOptions(items)
 
-	const [selectedIngredients, { toggle: addIngredients }] = useSet(
-		new Set<number>()
-	)
-
-	const pizzaDetails = PizzaDetails(
+	const { totalPrice, textDetails } = PizzaDetails(
 		size,
 		type,
 		items,
 		ingredients,
 		selectedIngredients
 	)
-
-	const availablePizzasSizes = getAvailablePizzaSizes(type, items)
-
-	useEffect(() => {
-		const isAvailableSize = availablePizzasSizes.find(
-			item => Number(item.value) == size && !item.disabled
-		)
-		const availableSize = availablePizzasSizes.find(item => !item.disabled)
-
-		if (!isAvailableSize && availableSize) {
-			setSizes(Number(availableSize.value) as PizzaSizes)
-		}
-	}, [type])
 
 	const handleClickAdd = () => {
 		console.log({
@@ -70,12 +59,12 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 
 			<div className='w-[490px] bg-[#f7f6f5] p-7'>
 				<Title text={name} size='md' className='mb-1 font-extrabold' />
-				<p className='text-gray-400'>{pizzaDetails.textDetails}</p>
+				<p className='text-gray-400'>{textDetails}</p>
 
 				<div className='flex flex-col mt-4 gap-2'>
 					<GroupVariants
 						onClick={value => setSizes(Number(value) as PizzaSizes)}
-						items={availablePizzasSizes}
+						items={availableSizes}
 						value={String(size)}
 					/>
 
@@ -105,7 +94,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 					onClick={handleClickAdd}
 					className='h-[55px] px-10 text-base rounded-[18px] w-full mt-4'
 				>
-					Добавить в корзину за {pizzaDetails.totalPrice} ₽
+					Добавить в корзину за {totalPrice} ₽
 				</Button>
 			</div>
 		</div>
