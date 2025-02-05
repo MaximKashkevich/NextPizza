@@ -3,23 +3,16 @@ import { prisma } from '../../../prisma/prisma-client'
 
 export async function GET(req: NextRequest) {
 	try {
-		const userId = 1
 		const token = req.cookies.get('cartToken')?.value
 
+		// Если токена нет, возвращаем пустую корзину
 		if (!token) {
-			return NextResponse.json({ items: [] })
+			return NextResponse.json({ totalAmount: 0, items: [] })
 		}
 
 		const userCart = await prisma.cart.findFirst({
 			where: {
-				OR: [
-					{
-						userId,
-					},
-					{
-						token,
-					},
-				],
+				token,
 			},
 			include: {
 				items: {
@@ -30,7 +23,9 @@ export async function GET(req: NextRequest) {
 						productItem: {
 							include: {
 								product: {
-									ingredients: true,
+									include: {
+										ingredients: true,
+									},
 								},
 							},
 						},
@@ -45,9 +40,9 @@ export async function GET(req: NextRequest) {
 		}
 
 		// Если корзины не найдены, возвращаем пустую корзину
-		return NextResponse.json({ cart: [] })
+		return NextResponse.json({ items: [] })
 	} catch (err) {
-		console.log(err)
+		console.error(err) // Используем console.error для ошибок
 		return NextResponse.json({ error: 'An error occurred' }, { status: 500 })
 	}
 }
