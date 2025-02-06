@@ -1,3 +1,4 @@
+import { CalcCartItemPrice } from '.'
 import { CartDTO } from '../services/dto/cart.dto'
 
 export type CartStateItem = {
@@ -18,18 +19,20 @@ interface ReturnProps {
 }
 
 export const getCartDetails = (data: CartDTO): ReturnProps => {
-	const items = data.items.map(item => {
-		id: item.id
-		quantity: item.quantity
-		name: item.productItem.product.name
-		price: item.productItem.product.price
-		pizzaSize: item.productItem.size
-		type: item.productItem.pizzaType
-		ingredients: item.ingredients.map(ingredient => {
-			name: ingredient.name
-			price: ingredient.price
-		})
-	})
+	const items = data.items.map(item => ({
+		id: item.id,
+		quantity: item.quantity,
+		name: item.productItem.product.name,
+		imageUrl: item.productItem.product.imageUrl,
+		price: CalcCartItemPrice(item),
+		pizzaSize: item.productItem.size,
+		pizzaType: item.productItem.pizzaType,
+		disabled: false,
+		ingredients: item.ingredients.map(ingredient => ({
+			name: ingredient.name,
+			price: ingredient.price,
+		})),
+	})) as CartStateItem[]
 
 	return {
 		items,
