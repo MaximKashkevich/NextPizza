@@ -29,7 +29,7 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({
 	const totalAmount = useCartStore(state => state.totalAmount)
 
 	useEffect(() => {
-		fetchCartItems()
+		console.log(`Данные: ${fetchCartItems()}`)
 	}, [fetchCartItems])
 
 	useEffect(() => {
@@ -69,7 +69,7 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({
 								/>
 							))
 						) : (
-							<p>Корзина пуста</p> // Сообщение, если корзина пуста
+							<p>Корзина пуста</p>
 						)}
 					</div>
 				</div>
