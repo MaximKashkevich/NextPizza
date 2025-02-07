@@ -7,6 +7,7 @@ export default async function ProductModalPage({
 }: {
 	params: { id: string }
 }) {
+	// Извлекаем id из params
 	const { id } = params
 
 	if (!id) {
