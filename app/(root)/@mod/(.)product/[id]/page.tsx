@@ -2,16 +2,11 @@ import { notFound } from 'next/navigation'
 import { prisma } from '../../../../../prisma/prisma-client'
 import { ChooseProductModal } from '../../../../../shared/components/shared'
 
-interface PageProps {
-	params: {
-		id: string
-	}
-}
-
-export default async function ProductModalPage({ params }: PageProps) {
-	const { id } = params // Деструктурируем id из params
-
-	// Проверяем, если id не определен (хотя это не должно происходить в Next.js)
+export default async function ProductModalPage({
+	params: id,
+}: {
+	params: { id: string }
+}) {
 	if (!id) {
 		return notFound()
 	}

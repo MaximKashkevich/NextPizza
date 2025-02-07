@@ -11,7 +11,11 @@ export async function GET(req: NextRequest) {
 
 		const userCart = await prisma.cart.findFirst({
 			where: {
-				token,
+				OR: [
+					{
+						token,
+					},
+				],
 			},
 			include: {
 				items: {
@@ -21,26 +25,21 @@ export async function GET(req: NextRequest) {
 					include: {
 						productItem: {
 							include: {
-								product: {
-									include: {
-										ingredients: true,
-									},
-								},
+								product: true,
 							},
 						},
+						ingredients: true,
 					},
 				},
 			},
 		})
 
-
-		if (userCart) {
-			return NextResponse.json({ userCart })
-		}
-
-		return NextResponse.json({ items: [] })
-	} catch (err) {
-		console.error(err) 
-		return NextResponse.json({ error: 'An error occurred' }, { status: 500 })
+		return NextResponse.json(userCart)
+	} catch (error) {
+		console.log('[CART_GET] Server error', error)
+		return NextResponse.json(
+			{ message: 'Не удалось получить корзину' },
+			{ status: 500 }
+		)
 	}
 }
