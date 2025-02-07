@@ -1,18 +1,7 @@
 import { create } from 'zustand'
 import { getCartDetails } from '../lib'
+import { CartStateItem } from '../lib/getCartDetails'
 import { Api } from '../services/api-client'
-
-export type CartStateItem = {
-	id: number
-	quantity: number
-	name: string
-	imageUrl: string
-	price: number
-	disabled?: boolean
-	pizzaSize?: number | null
-	pizzaType?: number | null
-	ingredients: Array<{ name: string; price: number }>
-}
 
 export interface CartState {
 	loading: boolean
@@ -43,10 +32,13 @@ export const useCartStore = create<CartState>(set => ({
 	fetchCartItems: async () => {
 		try {
 			set({ loading: true, error: false })
-			const data = await Api.cart.getCart()
-			console.log(set(getCartDetails(data)))
+			const data = await Api.cart.fetchCart()
+			set(getCartDetails(data))
 		} catch (e) {
 			console.log(e)
+			set({ error: true })
+		} finally {
+			set({ loading: false })
 		}
 	},
 

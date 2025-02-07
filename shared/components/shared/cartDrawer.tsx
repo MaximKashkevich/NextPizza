@@ -29,12 +29,8 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({
 	const totalAmount = useCartStore(state => state.totalAmount)
 
 	useEffect(() => {
-		console.log(`Данные: ${fetchCartItems()}`)
-	}, [fetchCartItems])
-
-	useEffect(() => {
-		console.log('Текущие товары в корзине:', items)
-	}, [items])
+		fetchCartItems()
+	}, [])
 
 	return (
 		<Sheet>
