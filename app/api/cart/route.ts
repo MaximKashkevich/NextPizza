@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../prisma/prisma-client'
 
@@ -39,6 +40,24 @@ export async function GET(req: NextRequest) {
 		console.log('[CART_GET] Server error', error)
 		return NextResponse.json(
 			{ message: 'Не удалось получить корзину' },
+			{ status: 500 }
+		)
+	}
+}
+
+export async function POST(req: NextRequest) {
+	try {
+		let token = req.cookies.get('cartToken')?.value
+
+		if (!token) {
+			token = crypto.randomUUID()
+		}
+
+		const userCart = await FindOrCreateCart(token)
+	} catch (error) {
+		console.log('[CART_POST] Server error', error)
+		return NextResponse.json(
+			{ message: 'Не удалось создать корзину' },
 			{ status: 500 }
 		)
 	}
