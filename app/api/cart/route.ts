@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../prisma/prisma-client'
+import { findOrCreateCart } from '../../../shared/lib/find-or-create-cart'
 
 export async function GET(req: NextRequest) {
 	try {
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
 			token = crypto.randomUUID()
 		}
 
-		const userCart = await FindOrCreateCart(token)
+		const userCart = await findOrCreateCart(token)
 	} catch (error) {
 		console.log('[CART_POST] Server error', error)
 		return NextResponse.json(
