@@ -11,6 +11,7 @@ interface ReturnProps {
 	setSizes: (size: PizzaSizes) => void
 	setTypes: (type: PizzaTypes) => void
 	selectedIngredients: Set<number>
+	currentItemId?: number
 	addIngredients: (id: number) => void
 	availableSizes: Variant[]
 }
@@ -21,6 +22,11 @@ export const usePizzaOptions = (items: ProductItem[]): ReturnProps => {
 	)
 	const [size, setSizes] = useState<PizzaSizes>(20)
 	const [type, setTypes] = useState<PizzaTypes>(1)
+
+	const currentItemId = items.find(
+		item => item.pizzaType === type && item.size === size
+	)?.id
+
 	const availableSizes = getAvailablePizzaSizes(type, items)
 	useEffect(() => {
 		const isAvailableSize = availableSizes.find(
@@ -41,5 +47,6 @@ export const usePizzaOptions = (items: ProductItem[]): ReturnProps => {
 		selectedIngredients,
 		addIngredients,
 		availableSizes,
+		currentItemId,
 	}
 }

@@ -1,5 +1,5 @@
 import { instance } from './axios'
-import { CartDTO } from './dto/cart.dto'
+import { CartDTO, CreateCartItemValues } from './dto/cart.dto'
 
 export const fetchCart = async (): Promise<CartDTO> => {
 	return (await instance.get<CartDTO>('/cart')).data
@@ -14,4 +14,10 @@ export const updateItemQuantity = async (
 
 export const removeCartItem = async (id: number): Promise<CartDTO> => {
 	return (await instance.delete<CartDTO>('/cart/' + id)).data
+}
+
+export const addCartItem = async (
+	values: CreateCartItemValues
+): Promise<CartDTO> => {
+	return (await instance.post<CartDTO>('/cart', values)).data
 }

@@ -47,62 +47,65 @@ export async function GET(req: NextRequest) {
 		)
 	}
 }
-
 export async function POST(req: NextRequest) {
 	try {
-		let token = req.cookies.get('cartToken')?.value
+		// Получаем токен корзины из куки
+		let token = req.cookies.get('cartToken')?.value || crypto.randomUUID()
 
-		if (!token) {
-			token = crypto.randomUUID()
+		// Получаем userId, если он есть (например, из запроса)
+		const { userId, productItemId, ingredients } =
+			(await req.json()) as CreateCartItemValues & { userId?: number }
+
+		if (userId === undefined) {
+			return NextResponse.json(
+				{ message: 'userId обязателен' },
+				{ status: 400 }
+			)
 		}
 
-		const userCart = await findOrCreateCart(token)
+		// Создаем или находим корзину
+		const userCart = await findOrCreateCart(token, userId)
 
-		const data = (await req.json()) as CreateCartItemValues
-
-		const findCartItem = await prisma.cartItem.findFirst({
+		// Проверяем, есть ли уже этот товар в корзине (с этими же ингредиентами)
+		const existingCartItem = await prisma.cartItem.findFirst({
 			where: {
 				cartId: userCart.id,
-				productItemId: data.productItemId,
+				productItemId,
 				ingredients: {
 					every: {
-						id: { in: data.ingredients },
+						id: { in: ingredients },
 					},
 				},
 			},
 		})
 
-		// Если товар был найден, делаем +1
-		if (findCartItem) {
+		if (existingCartItem) {
+			// Если товар уже есть, увеличиваем количество
 			await prisma.cartItem.update({
-				where: {
-					id: findCartItem.id,
-				},
-				data: {
-					quantity: findCartItem.quantity + 1,
-				},
+				where: { id: existingCartItem.id },
+				data: { quantity: existingCartItem.quantity + 1 },
 			})
 		} else {
+			// Если товара нет, создаем новый
 			await prisma.cartItem.create({
 				data: {
 					cartId: userCart.id,
-					productItemId: data.productItemId,
+					productItemId,
 					quantity: 1,
-					ingredients: { connect: data.ingredients?.map(id => ({ id })) },
+					ingredients: { connect: ingredients?.map(id => ({ id })) },
 				},
 			})
 		}
 
+		// Обновляем общую сумму корзины
 		const updatedUserCart = await updateCartTotalAmount(token)
 
+		// Отправляем обновленные данные и устанавливаем токен в куки
 		const resp = NextResponse.json(updatedUserCart)
 		resp.cookies.set('cartToken', token)
 		return resp
 	} catch (error) {
-		console.log(
-			'[CART_POST] Server error',
-			error ? JSON.stringify(error) : 'Unknown error'
-		)
+		console.error('[CART_POST] Server error:', error)
 		return NextResponse.json(
 			{ message: 'Не удалось создать корзину' },
 			{ status: 500 }

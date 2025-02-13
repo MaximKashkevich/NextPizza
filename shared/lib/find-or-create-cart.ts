@@ -1,6 +1,6 @@
 import { prisma } from '../../prisma/prisma-client'
 
-export const findOrCreateCart = async (token: string) => {
+export const findOrCreateCart = async (token: string, userId: number) => {
 	let userCart = await prisma.cart.findFirst({
 		where: {
 			token,
@@ -11,6 +11,11 @@ export const findOrCreateCart = async (token: string) => {
 		userCart = await prisma.cart.create({
 			data: {
 				token,
+				user: {
+					connect: {
+						id: userId,
+					},
+				},
 			},
 		})
 	}
