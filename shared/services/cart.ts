@@ -1,7 +1,7 @@
 import { instance } from './axios'
 import { CartDTO, CreateCartItemValues } from './dto/cart.dto'
 
-export const fetchCart = async (): Promise<CartDTO> => {
+export const getCart = async (): Promise<CartDTO> => {
 	return (await instance.get<CartDTO>('/cart')).data
 }
 

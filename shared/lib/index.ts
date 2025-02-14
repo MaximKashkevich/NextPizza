@@ -1,4 +1,4 @@
-export { CalcCartItemPrice } from './calc-cart-item-price'
+export { calcCartItemTotalPrice } from './calc-cart-item-price'
 export { calcTotalPizzaPrice } from './calcTotalPizzaPrice'
 export { getAvailablePizzaSizes } from './getAvailablePizzaSizes'
 export { getCartDetails } from './getCartDetails'
