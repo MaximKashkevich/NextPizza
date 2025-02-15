@@ -14,16 +14,13 @@ export default async function Home({
 	searchParams: GetSearchParams
 }) {
 	const categories = await findPizzas(searchParams)
+
 	return (
 		<>
 			<Container className='mt-10'>
 				<Title text='Все пиццы' size='lg' className='font-extrabolt'></Title>
 			</Container>
-			<TopBar
-				categories={categories.filter(
-					categorie => categorie.products.length > 0 //Если в опредленной категории есть продукт, рендерим
-				)}
-			/>
+			<TopBar categories={categories} />
 
 			<Container className='pb-14 mt-10'>
 				<div className='flex gap-[60px]'>

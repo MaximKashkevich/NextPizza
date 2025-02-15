@@ -37,17 +37,12 @@ export const useFilters = (): ReturnProps => {
 		new Set<string>(searchParams.get('ingredients')?.split(',') || [])
 	)
 
-	// Фильтр размеров
-	const [sizes, { toggle: toggleSizes }] = useSet(
-		new Set<string>(searchParams.get('sizes')?.split(',') || [])
-	)
-	// Фильтр типов
 	const [pizzaTypes, { toggle: togglePizzaTypes }] = useSet(
-		new Set<string>(
-			searchParams.has('pizzaTypes')
-				? searchParams.get('pizzaTypes')?.split(',')
-				: []
-		)
+		new Set<string>((searchParams.get('pizzaTypes') ?? '').split(','))
+	)
+
+	const [sizes, { toggle: toggleSizes }] = useSet(
+		new Set<string>((searchParams.get('sizes') ?? '').split(','))
 	)
 
 	// Фильтр цены
