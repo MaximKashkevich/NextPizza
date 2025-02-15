@@ -19,8 +19,8 @@ export const Filters: React.FC<Props> = ({ className }) => {
 
 	const updatePrice = (prices: number[]) => {
 		if (prices.length === 2) {
-			filters.setPrice('priceFrom', prices[0])
-			filters.setPrice('priceTo', prices[1])
+			filters.setPrices('priceFrom', prices[0])
+			filters.setPrices('priceTo', prices[1])
 		}
 	}
 
@@ -72,7 +72,7 @@ export const Filters: React.FC<Props> = ({ className }) => {
 						max={1000}
 						value={String(filters.prices.priceFrom || '')} // Исправлено на корректное значение
 						onChange={e =>
-							filters.setPrice('priceFrom', Number(e.target.value))
+							filters.setPrices('priceFrom', Number(e.target.value))
 						}
 					/>
 					<Input
@@ -81,7 +81,7 @@ export const Filters: React.FC<Props> = ({ className }) => {
 						max={1000}
 						placeholder='1000'
 						value={String(filters.prices.priceTo || '')}
-						onChange={e => filters.setPrice('priceTo', Number(e.target.value))}
+						onChange={e => filters.setPrices('priceTo', Number(e.target.value))}
 					/>
 				</div>
 				{/* Слайдер */}
