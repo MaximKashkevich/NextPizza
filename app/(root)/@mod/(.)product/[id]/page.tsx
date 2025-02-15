@@ -3,21 +3,13 @@ import { prisma } from '../../../../../prisma/prisma-client'
 import { ChooseProductModal } from '../../../../../shared/components/shared'
 
 export default async function ProductModalPage({
-	params,
+	params: { id },
 }: {
-	params: { id: string }
+	params: { id: number }
 }) {
-	// Извлекаем id из params
-	const { id } = params
-
-	if (!id) {
-		return notFound()
-	}
-
-	// Запрос к базе данных
 	const product = await prisma.product.findFirst({
 		where: {
-			id: Number(id), // Преобразуем id в число
+			id: Number(id),
 		},
 		include: {
 			ingredients: true,
@@ -25,11 +17,9 @@ export default async function ProductModalPage({
 		},
 	})
 
-	// Проверяем на наличие продукта в базе данных
 	if (!product) {
 		return notFound()
 	}
 
-	// Возвращаем компонент с продуктом
 	return <ChooseProductModal product={product} />
 }

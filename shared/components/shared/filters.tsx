@@ -35,17 +35,17 @@ export const Filters: React.FC<Props> = ({ className }) => {
 			<Title text='Фильтрация' size='sm' className='mb-5 font-extrabold' />
 
 			{/* Тип теста */}
-			{/* <CheckboxFiltersGroup
-        title="Тип теста"
-        name="pizzaTypes"
-        className="mb-5"
-        onClickCheckbox={filters.setPizzaTypes} // Исправлено на правильный метод
-        selected={filters.pizzaTypes} // Исправлено на правильное состояние
-        items={[
-          { text: "Тонкое", value: "1" },
-          { text: "Традиционное", value: "2" },
-        ]}
-      /> */}
+			<CheckboxFiltersGroup
+				title='Тип теста'
+				name='pizzaTypes'
+				className='mb-5'
+				onClickCheckbox={filters.setPizzaTypes}
+				selected={filters.pizzaTypes}
+				items={[
+					{ text: 'Тонкое', value: '1' },
+					{ text: 'Традиционное', value: '2' },
+				]}
+			/>
 
 			{/* Размеры */}
 			<CheckboxFiltersGroup

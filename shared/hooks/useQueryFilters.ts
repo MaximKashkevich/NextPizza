@@ -1,24 +1,30 @@
-import React from "react";
-import { Filters } from "./useFilters";
-import qs from "qs";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation'
+import qs from 'qs'
+import React from 'react'
+import { Filters } from './useFilters'
 
 export const useQueryFilters = (filters: Filters) => {
-  const router = useRouter();
+	const isMounted = React.useRef(false)
+	const router = useRouter()
 
-  React.useEffect(() => {
-    const params = {
-      ...filters.prices,
-      sizes: Array.from(filters.sizes),
-      ingredients: Array.from(filters.selectedIngredients),
-    };
+	React.useEffect(() => {
+		if (isMounted.current) {
+			const params = {
+				...filters.prices,
+				pizzaTypes: Array.from(filters.pizzaTypes),
+				sizes: Array.from(filters.sizes),
+				ingredients: Array.from(filters.selectedIngredients),
+			}
 
-    const query = qs.stringify(params, {
-      arrayFormat: "comma",
-    });
+			const query = qs.stringify(params, {
+				arrayFormat: 'comma',
+			})
 
-    router.push(`?${query}`, {
-      scroll: false,
-    });
-  }, [filters, router]);
-};
+			router.push(`?${query}`, {
+				scroll: false,
+			})
+		}
+
+		isMounted.current = true
+	}, [filters])
+}
