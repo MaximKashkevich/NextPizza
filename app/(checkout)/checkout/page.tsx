@@ -1,20 +1,32 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 import {
-	CheckoutItem,
 	CheckoutSidebar,
 	Container,
 	Title,
 	WhiteBlock,
 } from '../../../shared/components/shared'
+import { CheckoutCart } from '../../../shared/components/shared/checkout'
 import { FormInput } from '../../../shared/components/shared/form-components/form-input'
 import { Input, Textarea } from '../../../shared/components/ui'
-import { PizzaSizes, PizzaTypes } from '../../../shared/constants.ts/pizza'
 import { useCart } from '../../../shared/hooks'
-import { getCartItemDetails } from '../../../shared/lib'
 
 export default function CheckoutPage() {
 	const { totalAmount, items, updateItemQuantity, removeCartItem } = useCart()
+
+	const form = useForm({
+		resolver: zodResolver(),
+		defaultValues: {
+			email: '',
+			firstName: '',
+			lastName: '',
+			phone: '',
+			address: '',
+			comment: '',
+		},
+	})
 
 	const onClickCountButton = (
 		id: number,
@@ -35,30 +47,11 @@ export default function CheckoutPage() {
 			<div className='flex gap-10'>
 				{/* Левая часть */}
 				<div className='flex flex-col flex-1 gap-10 mb-20'>
-					<WhiteBlock title='1. Корзина'>
-						<div className='flex flex-col gap-5'>
-							{items.map(item => (
-								<CheckoutItem
-									key={item.id}
-									id={item.id}
-									imageUrl={item.imageUrl}
-									details={getCartItemDetails(
-										item.ingredients,
-										item.pizzaType as PizzaTypes,
-										item.pizzaSize as PizzaSizes
-									)}
-									name={item.name}
-									disabled={item.disabled}
-									price={item.price}
-									quantity={item.quantity}
-									onClickCountButton={type =>
-										onClickCountButton(item.id, item.quantity, type)
-									}
-									onClickRemove={() => removeCartItem(item.id)}
-								/>
-							))}
-						</div>
-					</WhiteBlock>
+					<CheckoutCart
+						onClickCountButton={onClickCountButton}
+						removeCartItem={removeCartItem}
+						items={items}
+					/>
 					<WhiteBlock title='2. Персональные данные'>
 						<div className='grid grid-cols-2 gap-5'>
 							<FormInput
