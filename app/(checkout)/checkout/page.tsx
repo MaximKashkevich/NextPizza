@@ -7,6 +7,7 @@ import {
 	Title,
 	WhiteBlock,
 } from '../../../shared/components/shared'
+import { FormInput } from '../../../shared/components/shared/form-components/form-input'
 import { Input, Textarea } from '../../../shared/components/ui'
 import { PizzaSizes, PizzaTypes } from '../../../shared/constants.ts/pizza'
 import { useCart } from '../../../shared/hooks'
@@ -60,14 +61,26 @@ export default function CheckoutPage() {
 					</WhiteBlock>
 					<WhiteBlock title='2. Персональные данные'>
 						<div className='grid grid-cols-2 gap-5'>
-							<Input name='firstName' className='text-base' placeholder='Имя' />
-							<Input
+							<FormInput
+								name='firstName'
+								className='text-base'
+								placeholder='Имя'
+							/>
+							<FormInput
 								name='lastName'
 								className='text-base'
 								placeholder='Фамилия'
 							/>
-							<Input name='email' className='text-base' placeholder='E-Mail' />
-							<Input name='phone' className='text-base' placeholder='Телефон' />
+							<FormInput
+								name='email'
+								className='text-base'
+								placeholder='E-Mail'
+							/>
+							<FormInput
+								name='phone'
+								className='text-base'
+								placeholder='Телефон'
+							/>
 						</div>
 					</WhiteBlock>
 
