@@ -1,7 +1,10 @@
-import { CheckoutItem, WhiteBlock } from '..'
+import React from 'react'
 import { PizzaSizes, PizzaTypes } from '../../../constants.ts/pizza'
 import { getCartItemDetails } from '../../../lib'
 import { CartStateItem } from '../../../lib/getCartDetails'
+import { CheckoutItem } from '../checkout-item'
+import { CheckoutItemSkeleton } from '../checkout-item-skeleton'
+import { WhiteBlock } from '../white-block'
 
 interface Props {
 	items: CartStateItem[]
@@ -23,28 +26,32 @@ export const CheckoutCart: React.FC<Props> = ({
 	className,
 }) => {
 	return (
-		<WhiteBlock title='1. Корзина'>
+		<WhiteBlock title='1. Корзина' className={className}>
 			<div className='flex flex-col gap-5'>
-				{items.map(item => (
-					<CheckoutItem
-						key={item.id}
-						id={item.id}
-						imageUrl={item.imageUrl}
-						details={getCartItemDetails(
-							item.ingredients,
-							item.pizzaType as PizzaTypes,
-							item.pizzaSize as PizzaSizes
-						)}
-						name={item.name}
-						disabled={item.disabled}
-						price={item.price}
-						quantity={item.quantity}
-						onClickCountButton={type =>
-							onClickCountButton(item.id, item.quantity, type)
-						}
-						onClickRemove={() => removeCartItem(item.id)}
-					/>
-				))}
+				{loading
+					? [...Array(4)].map((_, index) => (
+							<CheckoutItemSkeleton key={index} />
+					  ))
+					: items.map(item => (
+							<CheckoutItem
+								key={item.id}
+								id={item.id}
+								imageUrl={item.imageUrl}
+								details={getCartItemDetails(
+									item.ingredients,
+									item.pizzaType as PizzaTypes,
+									item.pizzaSize as PizzaSizes
+								)}
+								name={item.name}
+								price={item.price}
+								quantity={item.quantity}
+								disabled={item.disabled}
+								onClickCountButton={type =>
+									onClickCountButton(item.id, item.quantity, type)
+								}
+								onClickRemove={() => removeCartItem(item.id)}
+							/>
+					  ))}
 			</div>
 		</WhiteBlock>
 	)
