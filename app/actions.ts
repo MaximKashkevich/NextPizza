@@ -3,11 +3,13 @@
 import { OrderStatus } from '@prisma/client'
 import { cookies } from 'next/headers'
 import { prisma } from '../prisma/prisma-client'
+import { PayOrderTemplate } from '../shared/components'
 import { CheckoutFormValues } from '../shared/components/shared/checkout/checkout-form-schema'
+import { createPayment, sendEmail } from '../shared/lib'
 
 export const createOrder = async (data: CheckoutFormValues) => {
 	try {
-		const cookieStore = cookies()
+		const cookieStore = await cookies()
 		const cartToken = cookieStore.get('cartToken')?.value
 
 		if (!cartToken) {
@@ -33,12 +35,12 @@ export const createOrder = async (data: CheckoutFormValues) => {
 			},
 		})
 
-		/* Если корзина не найдена возращаем ошибку */
+		/* Если корзина не найдена, возвращаем ошибку */
 		if (!userCart) {
 			throw new Error('Cart not found')
 		}
 
-		/* Если корзина пустая возращаем ошибку */
+		/* Если корзина пустая, возвращаем ошибку */
 		if (userCart?.totalAmount === 0) {
 			throw new Error('Cart is empty')
 		}
@@ -47,7 +49,7 @@ export const createOrder = async (data: CheckoutFormValues) => {
 		const order = await prisma.order.create({
 			data: {
 				token: cartToken,
-				fullName: data.firstName + ' ' + data.lastName,
+				fullName: `${data.firstName} ${data.lastName}`,
 				email: data.email,
 				phone: data.phone,
 				address: data.address,
@@ -58,7 +60,7 @@ export const createOrder = async (data: CheckoutFormValues) => {
 			},
 		})
 
-		//Очищаем корзину
+		// Очищаем корзину
 		await prisma.cart.update({
 			where: {
 				id: userCart.id,
@@ -68,12 +70,47 @@ export const createOrder = async (data: CheckoutFormValues) => {
 			},
 		})
 
+		// Оищаем список товаров
 		await prisma.cartItem.deleteMany({
 			where: {
 				cartId: userCart.id,
 			},
 		})
+
+		// Создаем платеж на yookassa
+		const paymentData = await createPayment({
+			amount: order.totalAmount,
+			orderId: order.id,
+			description: 'Оплата заказа #' + order.id,
+		})
+
+		if (!paymentData) {
+			throw new Error('Payment data not found')
+		}
+
+		await prisma.order.update({
+			where: {
+				id: order.id,
+			},
+			data: {
+				paymentId: paymentData.id,
+			},
+		})
+
+		const paymentUrl = paymentData.confirmation.confirmation_url //Ссылка которая будет перенаправлять на yookassa
+
+		await sendEmail(
+			data.email,
+			`Next Pizza / Оплатите заказ #${order.id}`,
+			PayOrderTemplate({
+				orderId: order.id,
+				totalAmount: order.totalAmount,
+				paymentUrl,
+			})
+		)
+
+		return paymentUrl
 	} catch (error) {
-		console.log(error)
+		console.error('[CreateOrder] Server error', error)
 	}
 }
