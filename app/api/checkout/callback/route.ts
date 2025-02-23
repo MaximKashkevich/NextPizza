@@ -8,10 +8,8 @@ import { CartItemDTO } from '../../../../shared/services/dto/cart.dto'
 
 export async function POST(req: NextRequest) {
 	try {
-		//Получили запрос от yookassa
 		const body = (await req.json()) as PaymentCallbackData
 
-		//Нашли заказ
 		const order = await prisma.order.findFirst({
 			where: {
 				id: Number(body.object.metadata.order_id),
@@ -24,18 +22,16 @@ export async function POST(req: NextRequest) {
 
 		const isSucceeded = body.object.status === 'succeeded'
 
-		//Обновляем статус на COMPLETED
 		await prisma.order.update({
 			where: {
 				id: order.id,
 			},
 			data: {
-				status: isSucceeded ? OrderStatus.COMPLETED : OrderStatus.CANCELLED,
+				status: isSucceeded ? OrderStatus.SUCCEEDED : OrderStatus.CANCELLED,
 			},
 		})
 
-		//Находим товары
-		const items = order?.items as unknown as CartItemDTO[]
+		const items = JSON.parse(order?.items as string) as CartItemDTO[]
 
 		if (isSucceeded) {
 			await sendEmail(
@@ -44,7 +40,7 @@ export async function POST(req: NextRequest) {
 				OrderSuccessTemplate({ orderId: order.id, items })
 			)
 		} else {
-			//Письмо о не успешной оплате
+			// Письмо о неуспешной оплате
 		}
 	} catch (error) {
 		console.log('[Checkout Callback] Error:', error)

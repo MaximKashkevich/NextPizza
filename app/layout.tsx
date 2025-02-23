@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Nunito } from 'next/font/google'
-import { Toaster } from 'react-hot-toast'
+import { Providers } from '../shared/components/shared/providers'
 import './globals.css'
 
 const nunito = Nunito({
@@ -26,8 +26,7 @@ export default function RootLayout({
 			</head>
 			<body className={`${nunito.variable} ${nunito.variable} antialiased`}>
 				<main className='min-h-screen'>
-					{children}
-					<Toaster />
+					<Providers>{children}</Providers>
 				</main>
 			</body>
 		</html>
