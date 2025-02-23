@@ -1,15 +1,13 @@
 'use client'
 
-import { User } from 'lucide-react'
-import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { cn } from '../../lib/utils'
-import { Button } from '../ui'
-import { CartButton, Container, SearchInput } from './index'
+import { CartButton, Container, ProfileButton, SearchInput } from './index'
+import { AuthModal } from './modals/auth-modal'
 
 interface Props {
 	className?: string
@@ -24,9 +22,7 @@ export const Header: React.FC<Props> = ({
 }) => {
 	const searchParams = useSearchParams()
 
-	const { data: session } = useSession()
-
-	console.log(session, 999)
+	const [openAuthModal, setOpenAuthModal] = React.useState(false)
 
 	useEffect(() => {
 		if (searchParams.has('paid')) {
@@ -60,19 +56,12 @@ export const Header: React.FC<Props> = ({
 					)}
 					{/* Правая часть */}
 					<div className='flex items-center gap-2 md:gap-3'>
-						<Button
-							onClick={() =>
-								signIn('github', {
-									callbackUrl: '/',
-									redirect: true,
-								})
-							}
-							variant='outline'
-							className='gap-1'
-						>
-							<User size={16} />
-							Войти
-						</Button>
+						<AuthModal
+							open={openAuthModal}
+							onClose={() => setOpenAuthModal(false)}
+						/>
+
+						<ProfileButton onClickSignIn={() => setOpenAuthModal(true)} />
 						{hasCart && (
 							<div>
 								<CartButton />

@@ -39,7 +39,7 @@ async function up() {
 			{
 				fullName: 'User Test',
 				email: 'user@test.ru',
-				password: hashSync('111111', 10),
+				password: hashSync('11111', 10),
 				role: 'USER',
 			},
 			{
