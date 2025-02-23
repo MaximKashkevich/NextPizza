@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { prisma } from '../../../prisma/prisma-client'
-import { getUserSession } from '../../../shared/lib'
+import { ProfileForm } from '../../../shared/components'
+import { getUserSession } from '../../../shared/lib/get-user-session'
 
 export default async function ProfilePage() {
 	const session = await getUserSession()
@@ -17,5 +18,5 @@ export default async function ProfilePage() {
 		return redirect('/not-auth')
 	}
 
-	return 1212
+	return <ProfileForm data={user} />
 }

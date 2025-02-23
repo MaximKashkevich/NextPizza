@@ -1,11 +1,13 @@
 'use server'
 
-import { OrderStatus } from '@prisma/client'
+import { OrderStatus, Prisma } from '@prisma/client'
+import { hashSync } from 'bcrypt'
 import { cookies } from 'next/headers'
 import { prisma } from '../prisma/prisma-client'
 import { PayOrderTemplate } from '../shared/components'
 import { CheckoutFormValues } from '../shared/components/shared/checkout/checkout-form-schema'
 import { createPayment, sendEmail } from '../shared/lib'
+import { getUserSession } from '../shared/lib/get-user-session'
 
 export const createOrder = async (data: CheckoutFormValues) => {
 	try {
@@ -112,5 +114,37 @@ export const createOrder = async (data: CheckoutFormValues) => {
 		return paymentUrl
 	} catch (error) {
 		console.error('[CreateOrder] Server error', error)
+	}
+}
+
+export async function updateUserInfo(body: Prisma.UserUpdateInput) {
+	try {
+		const currentUser = await getUserSession()
+
+		if (!currentUser) {
+			throw new Error('User not found')
+		}
+
+		const findUser = await prisma.user.findFirst({
+			where: {
+				id: Number(currentUser.id),
+			},
+		})
+
+		await prisma.user.update({
+			where: {
+				id: Number(currentUser.id),
+			},
+			data: {
+				fullName: body.fullName,
+				email: body.email,
+				password: body.password
+					? hashSync(body.password as string, 10)
+					: findUser?.password,
+			},
+		})
+	} catch (err) {
+		console.log('Error [CREATE_USER]', err)
+		throw err
 	}
 }
