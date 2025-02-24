@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import router from 'next/router'
 import React, { useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { cn } from '../../lib/utils'
@@ -25,8 +26,23 @@ export const Header: React.FC<Props> = ({
 	const [openAuthModal, setOpenAuthModal] = React.useState(false)
 
 	useEffect(() => {
+		let toastMessage = ''
+
 		if (searchParams.has('paid')) {
-			toast.success('Заказ успешно оплачен! Информация отправлена на почту.')
+			toastMessage = 'Заказ успешно оплачен! Информация отправлена на почту.'
+		}
+
+		if (searchParams.has('verified')) {
+			toastMessage = 'Почта успешно подтверждена!'
+		}
+
+		if (toastMessage) {
+			setTimeout(() => {
+				router.replace('/')
+				toast.success(toastMessage, {
+					duration: 3000,
+				})
+			}, 1000)
 		}
 	}, [])
 

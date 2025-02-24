@@ -3,6 +3,7 @@ import React from 'react'
 import { Button } from '../../../ui'
 import { Dialog, DialogContent } from '../../../ui/dialog'
 import { LoginForm } from './forms/login-form'
+import { RegisterForm } from './forms/register-form'
 
 interface Props {
 	open: boolean
@@ -21,7 +22,7 @@ export const AuthModal: React.FC<Props> = ({ open, onClose }) => {
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
 			<DialogContent className='w-[450px] bg-white p-10'>
-				{type === 'login' ? <LoginForm /> : <h1>Register</h1>}
+				{type === 'login' ? <LoginForm /> : <RegisterForm />}
 				<hr />
 				<div className='flex gap-2'>
 					<Button
